@@ -1,0 +1,3562 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн Тест - JavaScript</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+         :root {
+            --primary-color: #6a11cb;
+            --primary-hover: #4a00e0;
+            --text-color: #333;
+            --bg-color: #fff;
+            --container-bg: #fff;
+            --border-color: #ddd;
+            --card-bg: #f9f9f9;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+            --info-color: #2196f3;
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --timer-warning: #ff9800;
+            --timer-danger: #f44336;
+        }
+        
+        body.dark-mode {
+            --primary-color: #8c52ff;
+            --primary-hover: #6a30d9;
+            --text-color: #e0e0e0;
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --border-color: #444;
+            --card-bg: #2d2d2d;
+            --success-color: #81c784;
+            --danger-color: #e57373;
+            --warning-color: #ffb74d;
+            --info-color: #64b5f6;
+            --gradient-start: #4a4a4a;
+            --gradient-end: #2d2d2d;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: var(--container-bg);
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 28px;
+            color: var(--primary-color);
+        }
+        
+        label,
+        input[type="checkbox"] {
+            font-size: 17px;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+        
+        input[type="number"] {
+            width: 70px;
+            padding: 6px;
+            font-size: 16px;
+            margin-left: 10px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+        
+        .answers label {
+            display: block;
+            font-size: 17px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--card-bg);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .answers label:hover {
+            border-color: var(--primary-color);
+            transform: translateX(5px);
+        }
+        
+        .answers label.correct {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        
+        .answers label.incorrect {
+            background: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+        }
+        
+        .progress {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        #questionNavigator {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 20px;
+        }
+        
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-btn.correct {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .nav-btn.incorrect {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        #result,
+        #homeBtn {
+            text-align: center;
+            font-size: 22px;
+            margin-top: 30px;
+            font-weight: bold;
+            color: var(--success-color);
+        }
+        
+        #homeBtn {
+            display: none;
+        }
+        /* Новые стили для таймера */
+        
+        .timer-container {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .timer.warning {
+            color: var(--timer-warning);
+        }
+        
+        .timer.danger {
+            color: var(--timer-danger);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        /* Новые стили для прогресс-бара */
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--card-bg);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        /* Стили для результатов и статистики */
+        
+        .results-container {
+            display: none;
+            padding: 20px;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .results-score {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .results-time {
+            font-size: 18px;
+            color: var(--text-color);
+        }
+        
+        .results-chart-container {
+            margin: 20px 0;
+            height: 300px;
+        }
+        
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        /* Тема переключатель */
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--container-bg);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle i {
+            font-size: 20px;
+            color: var(--text-color);
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+        /* Бонусные стили для адаптивности */
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px;
+                margin: 15px 10px;
+            }
+            .btn {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .question {
+                font-size: 18px;
+            }
+            .answers label {
+                font-size: 16px;
+                padding: 8px;
+            }
+            .results-actions {
+                flex-direction: column;
+            }
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+        /* Стили для режима обучения */
+        
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--info-color);
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .explanation-title {
+            font-weight: 600;
+            color: var(--info-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .show-explanation-btn {
+            margin-top: 10px;
+            background-color: var(--info-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .show-explanation-btn:hover {
+            opacity: 0.9;
+        }
+        /* Стили для разных типов вопросов */
+        
+        .short-answer-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .matching-item {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .matching-pair {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .matching-pair select {
+            margin-left: 10px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--container-bg);
+            color: var(--text-color);
+        }
+        
+        .matching-divider {
+            flex-grow: 1;
+            margin: 0 10px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        /* Стили для персонализации */
+        
+        .profile-container {
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            margin-bottom: 20px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .profile-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .profile-stat {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .profile-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .profile-stat-label {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        /* Стили для таймера вопроса */
+        
+        .question-timer {
+            font-size: 16px;
+            color: var(--text-color);
+            text-align: right;
+            margin-bottom: 5px;
+        }
+        /* Стили для уровня сложности */
+        
+        .difficulty-indicator {
+            display: inline-block;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        
+        .difficulty-easy {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .difficulty-medium {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .difficulty-hard {
+            background-color: #f44336;
+            color: white;
+        }
+        /* Стили для доступности */
+        
+        .accessibility-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--container-bg);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            z-index: 100;
+            display: none;
+        }
+        
+        .accessibility-panel.open {
+            display: block;
+        }
+        
+        .accessibility-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            z-index: 100;
+        }
+        
+        .font-size-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .font-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .high-contrast-toggle {
+            margin-top: 5px;
+        }
+        
+        .screen-reader-text {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        /* Стили для адаптивных вопросов */
+        
+        .adaptive-mode-indicator {
+            display: inline-block;
+            color: var(--primary-color);
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        /* Высококонтрастный режим */
+        
+        body.high-contrast {
+            --primary-color: #ffff00;
+            --primary-hover: #e5e500;
+            --text-color: #ffffff;
+            --bg-color: #000000;
+            --container-bg: #000000;
+            --border-color: #ffffff;
+            --card-bg: #121212;
+            --success-color: #00ff00;
+            --danger-color: #ff0000;
+            --warning-color: #ffff00;
+            --info-color: #00ffff;
+            --shadow-color: rgba(255, 255, 255, 0.2);
+            --gradient-start: #000000;
+            --gradient-end: #121212;
+        }
+        
+        body.high-contrast .answers label {
+            border-width: 2px;
+        }
+        
+        body.high-contrast .btn {
+            border: 2px solid #ffffff;
+        }
+        /* Стили для социальных функций */
+        
+        .social-share {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        
+        .social-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .facebook-btn {
+            background-color: #3b5998;
+        }
+        
+        .twitter-btn {
+            background-color: #1da1f2;
+        }
+        
+        .whatsapp-btn {
+            background-color: #25d366;
+        }
+        
+        .telegram-btn {
+            background-color: #0088cc;
+        }
+        /* Стили для режима преподавателя */
+        
+        .teacher-mode-btn {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            background: var(--container-bg);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+        
+        .teacher-mode-btn i {
+            font-size: 20px;
+            color: var(--text-color);
+        }
+        
+        .teacher-panel {
+            background: var(--container-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            display: none;
+        }
+        
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .students-table th,
+        .students-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .students-table th {
+            background-color: var(--card-bg);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .export-btn {
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .export-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .certificate-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .certificate {
+            background-color: white;
+            width: 800px;
+            height: 600px;
+            position: relative;
+            padding: 40px;
+            border: 15px solid #f5c542;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: #333;
+        }
+        
+        .certificate-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+        
+        .certificate-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .certificate-name {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .certificate-message {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .certificate-score {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .certificate-date {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .certificate-seal {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #f5c542;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-15deg);
+        }
+        
+        .achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .achievement-popup {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            transform: translateX(120%);
+            transition: transform 0.5s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .achievement-notification.show .achievement-popup {
+            transform: translateX(0);
+        }
+        
+        .achievement-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .achievement-info h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .achievement-info p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+        
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .achievement-item .achievement-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+        
+        .achievement-details h4 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1em;
+        }
+        
+        .achievement-details p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+        
+        .no-achievements {
+            text-align: center;
+            color: var(--text-color);
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        .profile-achievements {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-achievements h3 {
+            margin: 0 0 15px 0;
+            color: var(--primary-color);
+            font-size: 1.2em;
+            text-align: center;
+        }
+        
+        .achievements-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .achievements-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .achievements-list::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-radius: 3px;
+        }
+        
+        .achievements-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .achievements-list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color-dark);
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .profile-info h2 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.4em;
+        }
+        
+        .profile-info p {
+            margin: 5px 0 0;
+            color: var(--text-color-secondary);
+        }
+        
+        .exit-btn {
+            background-color: var(--danger-color) !important;
+            margin: 20px auto;
+            display: block;
+            width: 200px;
+        }
+        
+        .exit-btn:hover {
+            background-color: #d32f2f !important;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: var(--container-bg);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn.confirm {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .modal-btn.cancel {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="accessibility-toggle" onclick="toggleAccessibilityPanel()" aria-label="Доступность">
+        <i class="fas fa-universal-access"></i>
+    </div>
+
+    <div class="accessibility-panel" id="accessibilityPanel">
+        <h3>Доступность</h3>
+        <div class="font-size-controls">
+            <button class="font-btn" onclick="changeFontSize(-1)" aria-label="Уменьшить размер шрифта">
+                <i class="fas fa-minus"></i>
+            </button>
+            <span id="currentFontSize">100%</span>
+            <button class="font-btn" onclick="changeFontSize(1)" aria-label="Увеличить размер шрифта">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        <div class="high-contrast-toggle">
+            <label>
+                <input type="checkbox" id="highContrastToggle" onchange="toggleHighContrast()">
+                Жоғары контраст
+            </label>
+        </div>
+        <button class="btn" style="margin-top: 10px;" onclick="toggleAccessibilityPanel()">Жабу</button>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle" title="Сменить тему" aria-label="Сменить тему">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="container">
+        <h1>JavaScript Тесті</h1>
+
+        <div id="profileContainer" class="profile-container">
+            <div class="profile-header">
+                <div id="profileAvatar" class="profile-avatar"></div>
+                <div class="profile-info">
+                    <h2 id="profileName">Қолданушы</h2>
+                    <p id="profileLevel">Деңгей: Бастаушы</p>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Тесттер</span>
+                    <span id="profileTestCount" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Дәлдік</span>
+                    <span id="profileAccuracy" class="stat-value">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Ұпайлар</span>
+                    <span id="profilePoints" class="stat-value">0</span>
+                </div>
+            </div>
+            <div class="profile-achievements">
+                <h3>Жетістіктер</h3>
+                <div id="profileAchievements" class="achievements-list">
+                    <!-- Достижения будут добавлены динамически -->
+                </div>
+            </div>
+        </div>
+
+        <div id="setup">
+            <div class="settings-group">
+                <label for="userNameInput">Аты-жөні:</label>
+                <input type="text" id="userNameInput" placeholder="Аты-жөніңізді енгізіңіз" class="short-answer-input">
+            </div>
+            <br>
+            <label>Сұрақтар саны:
+                <input type="number" id="questionCount" min="1" max="90" value="10">
+            </label><br><br>
+            <label><input type="checkbox" id="randomOrder"> Кездейсоқ сұрақтар</label><br>
+            <label><input type="checkbox" id="freeMode"> Еркін режим (қате/дұрыс көрінеді)</label><br>
+            <label><input type="checkbox" id="learningMode"> Оқу режимі (түсіндірмелермен)</label><br>
+            <label><input type="checkbox" id="adaptiveMode"> Адаптивті режим (қиындық деңгейі өзгереді)</label><br>
+            <label><input type="checkbox" id="showProfile" checked> Профильді көрсету</label><br>
+            <label><input type="checkbox" id="timerEnabled" checked> Уақыт шектеуі</label>
+            <select id="timerDuration">
+                <option value="60">1 минут</option>
+                <option value="300" selected>5 минут</option>
+                <option value="600">10 минут</option>
+                <option value="1800">30 минут</option>
+                <option value="3600">1 сағат</option>
+            </select><br><br>
+            <button class="btn" onclick="startTest()">Бастау</button>
+        </div>
+
+        <div id="quiz" style="display:none;">
+            <div class="timer-container">
+                <div class="timer" id="timer">00:00</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+            </div>
+            <div class="question-timer" id="questionTimer">Сұрақ уақыты: 00:00</div>
+            <div id="questionBox" class="question"></div>
+            <div id="answers" class="answers"></div>
+            <button id="showExplanationBtn" class="show-explanation-btn" onclick="toggleExplanation()">
+                <i class="fas fa-lightbulb"></i> Түсіндірмені көру
+            </button>
+            <div id="explanation" class="explanation-box">
+                <div class="explanation-title">
+                    <i class="fas fa-lightbulb"></i> Түсіндірме
+                </div>
+                <div id="explanationContent"></div>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn" onclick="prevQuestion()" aria-label="Предыдущий вопрос">Артқа</button>
+                <button class="btn" onclick="nextQuestion()" aria-label="Следующий вопрос">Келесі</button>
+            </div>
+            <div class="progress" id="progress"></div>
+            <div id="questionNavigator"></div>
+            <button class="btn exit-btn" onclick="confirmExit()" style="margin-top: 20px; background-color: var(--danger-color);">
+                <i class="fas fa-sign-out-alt"></i> Тесттен шығу
+            </button>
+        </div>
+
+        <div id="result"></div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <div class="results-score" id="resultsScore">Нәтиже: 0/0</div>
+                <div class="results-time" id="resultsTime">Уақыт: 00:00</div>
+            </div>
+            <div class="results-chart-container">
+                <canvas id="resultsChart"></canvas>
+            </div>
+            <div class="results-actions">
+                <button class="action-btn" onclick="savePDF()">
+                    <i class="fas fa-file-pdf"></i> PDF сақтау
+                </button>
+                <button class="action-btn" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Қайта бастау
+                </button>
+                <button class="action-btn" onclick="showDetailedResults()">
+                    <i class="fas fa-list"></i> Толық нәтижелер
+                </button>
+                <button class="action-btn" onclick="showCertificate()">
+                    <i class="fas fa-award"></i> Сертификат
+                </button>
+            </div>
+            <div class="social-share">
+                <div class="social-btn facebook-btn" onclick="shareResult('facebook')">
+                    <i class="fab fa-facebook-f"></i>
+                </div>
+                <div class="social-btn twitter-btn" onclick="shareResult('twitter')">
+                    <i class="fab fa-twitter"></i>
+                </div>
+                <div class="social-btn whatsapp-btn" onclick="shareResult('whatsapp')">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="social-btn telegram-btn" onclick="shareResult('telegram')">
+                    <i class="fab fa-telegram-plane"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="teacher-panel" id="teacherPanel">
+            <h2>Оқытушы панелі</h2>
+            <p>Студенттердің нәтижелерін көру және экспорттау үшін.</p>
+
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th>Аты-жөні</th>
+                        <th>Тесттер</th>
+                        <th>Орташа балл</th>
+                        <th>Жалпы уақыт</th>
+                        <th>Деңгей</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody">
+                    <!-- Данные будут добавлены через JavaScript -->
+                </tbody>
+            </table>
+
+            <div style="margin-top: 20px;">
+                <button class="export-btn" onclick="exportTeacherData('excel')">
+                    <i class="fas fa-file-excel"></i> Excel-ге экспорттау
+                </button>
+                <button class="export-btn" onclick="exportTeacherData('pdf')">
+                    <i class="fas fa-file-pdf"></i> PDF-ке экспорттау
+                </button>
+                <button class="export-btn" onclick="generateGroupReport()">
+                    <i class="fas fa-chart-bar"></i> Топтық есеп
+                </button>
+            </div>
+        </div>
+
+        <div id="homeBtn">
+            <button class="btn" onclick="location.reload()">Басты бетке қайту</button>
+        </div>
+    </div>
+
+    <div class="certificate-container" id="certificateContainer">
+        <div class="certificate">
+            <div class="certificate-close" onclick="closeCertificate()">×</div>
+            <h1 class="certificate-title">Сертификат</h1>
+            <p class="certificate-name" id="certificateName">Аты-жөні</p>
+            <p class="certificate-message">
+                JavaScript тесті бойынша сәтті оқуды аяқтады
+            </p>
+            <p class="certificate-score" id="certificateScore">Нәтиже: 100%</p>
+            <p class="certificate-date" id="certificateDate">Күні: 01.01.2023</p>
+
+            <div class="certificate-seal">
+                <i class="fas fa-award" style="font-size: 40px; color: #fff;"></i>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <button class="export-btn" onclick="downloadCertificate()">
+                    <i class="fas fa-download"></i> Жүктеу
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="exitModal" class="modal">
+        <div class="modal-content">
+            <h3>Тесттен шығу</h3>
+            <p>Сіз шынымен тесттен шығғыңыз келе ме? Барлық жауаптар жоғалады.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" onclick="exitTest()">Иә, шығу</button>
+                <button class="modal-btn cancel" onclick="closeExitModal()">Жоқ, қалу</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rawText = `::Вопрос 001::JavaScipt ішіндегі цикл синтаксисі үшін
+{
+~for (шарт; инициализация; әрбір итерациядан кейінгі өрнек) (//цикл денесі)
+~for (әрбір итерациядан кейінгі өрнек; инициализация; шарт;) [//цикл денесі]
+=for (инициализация; шарт; әрбір итерациядан кейінгі өрнек) {//цикл денесі}
+~for (инициализация; әрбір итерациядан кейінгі өрнек; шарт;) </loop body>
+####JavaScript циклдерінің дұрыс синтаксисі: for(инициализация; шарт; инкремент) формасында болуы керек. Инициализация - бұл цикл басталғанда бір рет орындалатын код. Шарт - бұл әр итерация алдында тексерілетін шарт. Инкремент - бұл әр итерациядан кейін орындалатын код. Цикл денесі бұйра жақша ішінде жазылады.
+}
+
+::Вопрос 002::JavaScript тіліндегі айнымалылар типтері
+{
+=String, Boolean, Number, Array, Object
+~Text, Integer, Decimal, List, Dictionary
+~Char, Float, Double, Integer, Object
+~Word, Bit, Real, List, Map
+####JavaScript негізгі примитивтік типтері: String (мәтін), Number (сандар), Boolean (логикалық), null және undefined. Күрделі типтер: Array (массив) және Object (объект). String - мәтіндерді сақтау үшін, Number - сандарды сақтау үшін, Boolean - true/false мәндерін сақтау үшін, Array - элементтер тізімін сақтау үшін, Object - күрделі деректер құрылымдарын сақтау үшін қолданылады.
+}
+
+::Вопрос 003::Массивтің соңына элемент қосу үшін қолданылатын әдіс
+{
+~addElement()
+~append()
+=push()
+~insert()
+####JavaScript массивтерінің соңына элемент қосу үшін push() әдісі қолданылады. Мысалы: array.push(5) - массивтің соңына 5 санын қосады. Бұл әдіс массивтің жаңа ұзындығын қайтарады. Бірнеше элементті бір уақытта қосуға болады: array.push(1, 2, 3).
+}
+
+::Вопрос 004::JavaScript-те бүтін сандарды сақтау үшін пайдаланылатын деректер түрлері
+{
+~integer
+=number
+~int
+~numeric
+####JavaScript-те барлық сандар (бүтін және бөлшек) number типі арқылы сақталады. JavaScript-те int немесе integer сияқты бөлек бүтін сан типтері жоқ. Барлық сандар 64-биттік қалқыма нүктелі сандар (IEEE 754) ретінде сақталады.
+}
+
+::Вопрос 005::Console.log (null typeof) кодының нәтижесінде:
+{
+~"null"
+~null
+="object"
+~undefined
+####JavaScript-те typeof null нәтижесі "object" болып шығады. Бұл JavaScript-тің тарихи қатесі болып саналады және өзгеріссіз қалдырылған. Бұл қате JavaScript-тің алғашқы нұсқаларынан келіп, кейінірек өзгеріссіз қалдырылды, себебі көптеген веб-сайттар бұл әрекетке тәуелді болды.
+}
+
+::Вопрос 006::1-ден 10-ға дейінгі кездейсоқ сан
+{
+=math.floor(math.random() * 10)
+~math.random(1, 10)
+~rаndom(1, 10)
+~math.random() * 10
+####JavaScript-те кездейсоқ сан алу үшін Math.random() әдісі қолданылады. Ол 0-ден 1-ге дейінгі кездейсоқ санды қайтарады. 1-ден 10-ға дейінгі сан алу үшін Math.random() * 10 есептеледі, содан кейін Math.floor() арқылы бүтін санға айналдырылады. Math.random() * 10 0-ден 9.999... дейінгі санды береді, ал Math.floor() оны 0-ден 9-ға дейінгі бүтін санға айналдырады.
+}
+
+::Вопрос 007::InnerHTML не үшін қолданылады
+{
+~функцияларды хабарлау
+=элемент ішіне хабарлама енгізу
+~кестені толтыру үшін
+~фонға бояу беру үшін
+####innerHTML - бұл HTML элементінің ішкі HTML мазмұнын алу немесе орнатуға мүмкіндік беретін қасиет. Ол элементтің ішіндегі барлық HTML мазмұнын қамтиды. Бұл қасиетті пайдалана отырып, элементтің ішіне жаңа HTML мазмұнын енгізуге немесе оның ішіндегі мазмұнды өзгертуге болады. Мысалы: element.innerHTML = "<p>Жаңа мәтін</p>".
+}
+
+::Вопрос 008::Функциялар контекстіндегі рекурсия – бұл функцияның қабілеті..
+{
+=өзін-өзі шақыру
+~орындау контекстін өзгертеді
+~сыртқы контекстен айнымалыларға сілтеме жасайды
+~функциялары басқа функцияларды қайтарады
+####Рекурсия - бұл функцияның өзін-өзі шақыру қабілеті. Рекурсия күрделі мәселелерді шешу үшін қолданылады, мұнда мәселе бір-біріне ұқсас кіші мәселелерге бөлінеді. Рекурсияны қолданғанда, функция өзін-өзі шақырғанда жаңа контекст жасалады және әр шақыру өз айнымалыларын сақтайды. Рекурсияны тоқтату шарты болуы керек, әйтпесе шексіз цикл пайда болады.
+}
+
+::Вопрос 009::JavaScript-те функцияны орындау процесі екі фазадан тұрады
+{
+~ойдан шығару және орындау
+=құру және орындау
+~декларация және инициализация
+~қателерді жасау және өңдеу
+####JavaScript-те функцияны орындау процесі екі фазадан тұрады: құру фазасы және орындау фазасы. Құру фазасында функцияның барлық айнымалылары және функциялар жарияланады, бірақ оларға мәндер тағайындалмайды. Орындау фазасында код жолдан жолға орындалады және айнымалыларға мәндер тағайындалады. Бұл екі фазалық процес JavaScript-тің ерекшеліктерінің бірі болып табылады.
+}
+
+::Вопрос 010::JavaScript-те массивтің ұзындығын (элементтер санын) алыңыз
+{
+~array.size()
+=array.length()
+~array.count()
+~array.size
+####JavaScript-те массивтің ұзындығын алу үшін length қасиеті қолданылады. Бұл қасиет массивтегі элементтер санын қайтарады. Мысалы: const arr = [1, 2, 3]; console.log(arr.length); // 3. length қасиеті оқуға ғана емес, сонымен қатар жазуға да болады, бұл массивтің ұзындығын өзгертуге мүмкіндік береді.
+}
+
+::Вопрос 011::Нысан қасиетінің мәнін оның кілті арқылы алыңыз
+{
+~object.value(key)
+~object.getKeyValue(key)
+~object.key
+=object[key]
+####JavaScript-те нысан қасиетінің мәнін оның кілті арқылы алу үшін шаршы жақшалар синтаксисі object[key] қолданылады. Бұл әдіс динамикалық кілттермен жұмыс істеуге мүмкіндік береді. Мысалы: const obj = {name: "John"}; const key = "name"; console.log(obj[key]); // "John". Бұл әдіс object.key синтаксисінен гөрі, кілт айнымалы ретінде берілген кезде қолдануға ыңғайлы.
+}
+
+::Вопрос 012::Мұрагерлікпен жұмыс істеуге арналған түйінді сөздер
+{
+=extends и super
+~typeof
+~undefined
+~asyng.function
+####JavaScript-те мұрагерлікпен жұмыс істеу үшін extends және super түйінді сөздері қолданылады. extends - бұл класстың басқа кластан мұрагерлік алуын көрсететін түйінді сөз. super - бұл ата-ана классының конструкторын немесе әдістерін шақыруға мүмкіндік беретін түйінді сөз. Мысалы: class Child extends Parent { constructor() { super(); } }
+}
+
+::Вопрос 013::JavaScript тіліндегі нысаннан сипатты жою
+{
+=delete object.property
+~object.remove(property)
+~object.deleteProperty(property)
+~object.delete(property)
+####JavaScript-те нысаннан қасиетті жою үшін delete операторы қолданылады. Синтаксисі: delete object.property. Бұл оператор нысаннан қасиетті толығымен жояды. Мысалы: const obj = {name: "John"}; delete obj.name; // obj = {}. delete операторы тек нысанның өз қасиеттерін жоя алады, прототиптік тізбектегі қасиеттерді жоя алмайды.
+}
+
+::Вопрос 014::JavaScript-те оқиғаның көпіршігін тоқтату
+{
+~event.bubble()
+~event.stopBubble()
+=event.stopPropagation()
+~event.preventBubble()
+####JavaScript-те оқиғаның көпіршігін тоқтату үшін stopPropagation() әдісі қолданылады. Бұл әдіс оқиғаның жоғары деңгейдегі элементтерге таралуын тоқтатады. Мысалы: element.addEventListener('click', function(event) { event.stopPropagation(); });. Бұл әдіс оқиғаның көпіршігін тоқтатады, бірақ ағымдағы элементтегі оқиға өңдегіштері әлі де орындалады.
+}
+
+::Вопрос 015::JavaScript ішіндегі элементке оқиға өңдегішін қосыңыз
+{
+~element.attachEvent("басу", myFunction)
+~element.addEvent("басу", myFunction)
+=element.addEventListener("басу", myFunction)
+~element.onclick \= myFunction
+####JavaScript-те элементке оқиға өңдегішін қосу үшін addEventListener() әдісі қолданылады. Бұл әдіс бір элементке бірнеше оқиға өңдегіштерін қосуға мүмкіндік береді. Синтаксисі: element.addEventListener("оқиға түрі", функция). Мысалы: button.addEventListener("click", function() { alert("Түйме басылды!"); });. Бұл әдіс onclick сияқты қасиеттерден гөрі көп мүмкіндіктер береді.
+}
+
+::Вопрос 016::JavaScript-тегі оқиға делегациясы – бұл..
+{
+~элементі өз оқиғасын еншілес элементке береді
+=бір оқиға өңдеушісі бірнеше элементтердегі оқиғаларды өңдейді
+~event өзін шақырады
+~element еншілес элементтерден оқиғаларды ұстайды
+####Оқиға делегациясы - бұл бір оқиға өңдегішінің бірнеше элементтердегі оқиғаларды өңдеу әдісі. Бұл әдісте оқиға өңдегіші ата-ана элементке қосылады, ал оқиға көпіршігі арқылы еншілес элементтерге таралады. Бұл әдіс динамикалық қосылған элементтермен жұмыс істеуге және жадыны үнемдеуге көмектеседі. Мысалы: parent.addEventListener("click", function(event) { if(event.target.matches(".child")) { // код } });
+}
+
+::Вопрос 017::Оқиға өңдегішінде оқиға нысанын алыңыз
+{
+=event.target
+~event.getSource()
+~event.eventObject
+~event.getEvent()
+####JavaScript-те оқиға өңдегішінде оқиға нысанын алу үшін event.target қасиеті қолданылады. Бұл қасиет оқиға басталған элементке сілтеме береді. Мысалы: element.addEventListener("click", function(event) { console.log(event.target); });. event.target оқиғаның тікелей басталған элементін көрсетеді, ал event.currentTarget оқиға өңдегіші қосылған элементті көрсетеді.
+}
+
+::Вопрос 018::Оқиға өңдегішіндегі әдепкі шолғыш әрекетін қайта анықтау
+{
+~event.prevent()
+~event.stop()
+~event.halt()
+=event.preventDefault()
+####JavaScript-те оқиға өңдегішінде әдепкі шолғыш әрекетін болдырмау үшін preventDefault() әдісі қолданылады. Бұл әдіс шолғыштың әдепкі әрекетін тоқтатады. Мысалы: form.addEventListener("submit", function(event) { event.preventDefault(); });. Бұл әдіс пішіннің автоматты жіберілуін, сілтеменің автоматты ашылуын немесе басқа әдепкі әрекеттерді болдыру үшін қолданылады.
+}
+
+::Вопрос 019::JavaScript-те оның идентификаторы бойынша элементті алыңыз
+{
+=getElementById («myElement»)
+~selectElement («myElement»)
+~findElement («myElement»)
+~querySelector («myElement»)
+####JavaScript-те элементті оның идентификаторы бойынша алу үшін getElementById() әдісі қолданылады. Бұл әдіс берілген id-ге ие элементті қайтарады. Мысалы: const element = document.getElementById("myElement");. Бұл әдіс тез жұмыс істейді, себебі id бірегей болғандықтан, элементті тікелей табуға болады. Егер элемент табылмаса, null қайтарылады.
+}
+
+::Вопрос 020::JavaScript ішіндегі элементтің мәтіндік мазмұнын өзгерту
+{
+~element.value \= "New text"
+=element.textContent \= "New text"
+~element.innerHTML \= "New text"
+~element.text \= "New text"
+####JavaScript-те элементтің мәтіндік мазмұнын өзгерту үшін textContent қасиеті қолданылады. Бұл қасиет элементтің барлық мәтіндік мазмұнын (HTML тегтерін қоспағанда) алуға немесе орнатуға мүмкіндік береді. Мысалы: element.textContent = "Жаңа мәтін";. innerHTML-ден айырмашылығы, textContent HTML тегтерін мәтін ретінде көрсетеді және XSS шабуылдарынан қорғайды.
+}
+
+::Вопрос 021::Жаңа элементті негізгі элементтің соңына қосыңыз
+{
+~parentElement.add(newElement)
+=parentElement.appendChild(newElement)
+~parentElement.insert(newElement)
+~parentElement.addElement(newElement)
+####JavaScript-те жаңа элементті негізгі элементтің соңына қосу үшін appendChild() әдісі қолданылады. Бұл әдіс жаңа элементті негізгі элементтің соңғы бала элементі ретінде қосады. Мысалы: const newElement = document.createElement("div"); parentElement.appendChild(newElement);. Бұл әдіс тек бір элементті қоса алады. Бірнеше элементті қосу үшін append() әдісін қолдануға болады.
+}
+
+::Вопрос 022::JavaScript ішіндегі DOM файлынан элементті жою керек пе?
+{
+=element.remove()
+~element.delete()
+~element.removeChild()
+~element.dispose()
+####JavaScript-те DOM-нан элементті жою үшін remove() әдісі қолданылады. Бұл әдіс элементті оның ата-анасынан жойып, DOM-нан шығарады. Мысалы: element.remove();. Бұл әдіс removeChild() әдісінен гөрі ыңғайлы, себебі ол ата-ана элементті білуді талап етпейді. remove() әдісі элементті толығымен жояды, оны кейінірек қайта қосуға болады.
+}
+
+::Вопрос 023::Элементте белгілі бір CSS сыныбы бар-жоғын тексеріңіз
+{
+~element.hasClass("myClass")
+~element.containsClass("myClass")
+~element.isClass("myClass")
+=element.classList.contains ("myClass")
+####JavaScript-те элементте белгілі бір CSS сыныбы бар-жоғын тексеру үшін classList.contains() әдісі қолданылады. Бұл әдіс элементте берілген сынып бар-жоғын тексеріп, true немесе false қайтарады. Мысалы: if (element.classList.contains("myClass")) { // код }. classList - бұл элементтің барлық CSS сыныптарын басқаруға мүмкіндік беретін интерфейс.
+}
+
+::Вопрос 024::JavaScript жиындарында setTimeout функциясын пайдалану
+{
+~функцияның белгілі бір аралықта орындалу уақыты
+=функцияны орындау алдында күту уақыты
+~maximum функцияның орындалу уақыты
+~функцияны мерзімді түрде орындау
+####JavaScript-те setTimeout() функциясы белгілі бір уақыт өткеннен кейін функцияны орындау үшін қолданылады. Бұл функция екі параметрді қабылдайды: орындалатын функция және миллисекундпен көрсетілген күту уақыты. Мысалы: setTimeout(function() { alert("5 секунд өтті!"); }, 5000);. Бұл функция асинхронды жұмыс істейді, яғни ол кодтың қалған бөлігін тоқтатпайды.
+}
+
+::Вопрос 025::Асинхронды бағдарламалау контекстіндегі callback (кері шақыру) – бұл функция
+{
+~декларациядан кейін бірден орындалады
+=асинхронды операция аяқталғаннан кейін шақырылады
+~тек қателер болған жағдайда ғана орындалады
+~негізгі бағдарламаның орнына орындалады
+####Callback (кері шақыру) - бұл асинхронды операция аяқталғаннан кейін шақырылатын функция. Бұл функция асинхронды операцияның нәтижесін өңдеуге мүмкіндік береді. Мысалы: fetch('data.json').then(function(response) { return response.json(); }).then(function(data) { console.log(data); });. Callback функциялары асинхронды операцияларды басқарудың дәстүрлі әдісі болып табылады, бірақ олар "callback hell" мәселесін тудыра алады.
+}
+
+::Вопрос 026::Құрылысты пайдаланып JavaScript-те асинхронды қателерді өңдеңіз
+{
+~if...else
+=async/await
+~getElementByID
+~console.log()
+####JavaScript-те асинхронды қателерді өңдеу үшін async/await құрылымы қолданылады. Бұл құрылым асинхронды кодты синхронды код сияқты жазуға мүмкіндік береді. async функция ішінде await қолданылады, ол Promise шешімін күтеді. Мысалы: async function getData() { try { const response = await fetch('data.json'); const data = await response.json(); return data; } catch (error) { console.error('Қате:', error); } }
+}
+
+::Вопрос 027::JavaScript тіліндегі Promise (уәде) атқаратын қызметі
+{
+=асинхронды операцияның нәтижесін көрсететін объект
+~асинхронды кодты орындайтын функция
+~асинхронды операция
+~асинхронды кодтағы ерекшеліктерді өңдеу
+####Promise - бұл асинхронды операцияның нәтижесін көрсететін объект. Ол асинхронды операцияның аяқталуын, сәтті орындалуын немесе сәтсіздігін көрсетеді. Promise үш күйде болуы мүмкін: pending (күтуде), fulfilled (орындалды) және rejected (қате). Promise then() және catch() әдістері арқылы нәтижелерді өңдеуге мүмкіндік береді.
+}
+
+::Вопрос 028::Пайдалану арқылы параллельді бірнеше асинхронды операцияларды орындау
+{
+~циклдер
+=промистер және Promise.all() әдісі
+~кері қоңыраулар
+~async/await құрылымы
+####Бірнеше асинхронды операцияларды параллельді орындау үшін Promise.all() әдісі қолданылады. Бұл әдіс Promise объектілерінің массивін қабылдайды және барлық Promise шешілгеннен кейін нәтижелерді қайтарады. Мысалы: Promise.all([fetch('data1.json'), fetch('data2.json')]).then(responses => { // барлық сұраныстар аяқталды }). Бұл әдіс барлық Promise сәтті шешілсе ғана сәтті болады.
+}
+
+::Вопрос 029::Деректерді JavaScript тілінде консольге шығару әдісі
+{
+=console.log()
+~print()
+~log.console()
+~output.console()
+####JavaScript-те деректерді консольге шығару үшін console.log() әдісі қолданылады. Бұл әдіс бір немесе бірнеше параметрді қабылдайды және оларды консольге шығарады. Мысалы: console.log("Сәлем", 42, {name: "John"});. console.log() әдісі әзірлеу кезінде деректерді тексеру және қателерді іздеу үшін қолданылады. Ол әртүрлі деректер типтерін (мәтін, сандар, объектілер) көрсете алады.
+}
+
+::Вопрос 030::Айнымалы түрін тексеру
+{
+=typeof variable
+~typeOf(variable)
+~variable.type()
+~type(variable)
+####JavaScript-те айнымалы түрін тексеру үшін typeof операторы қолданылады. Бұл оператор айнымалының түрін мәтін ретінде қайтарады. Мысалы: typeof "hello" // "string", typeof 42 // "number", typeof true // "boolean". typeof операторы null үшін "object" қайтарады, бұл JavaScript-тің тарихи қатесі. Массивтер үшін де "object" қайтарады, сондықтан массивтерді тексеру үшін Array.isArray() әдісін қолдану керек.
+}
+
+::Вопрос 031::JavaScript тілінде массив құру
+{
+~var array \= фигуралық жақша
+=var array \= тік жақша
+~array()
+~array \= new Array()
+####JavaScript-те функцияның ішінде this кілттік сөзі ағымдағы объектіні білдіреді. Бұл функция шақырылған контекстке байланысты өзгереді. Егер функция объектінің әдісі ретінде шақырылса, this сол объектіні көрсетеді. Егер функция жай ғана шақырылса, this – глобал объект (браузерде window). Arrow function-да this сыртқы контексттен алынады.
+}
+
+::Вопрос 032::Санды дөңгелектеуге арналған функция
+{
+=round()
+~floor()
+~ceil()
+~truncate()
+}
+
+::Вопрос 033::Массив соңына элемент қосу
+{
+~array.add(item)
+=array.push(item)
+~array.insertEnd(item)
+~array.append(item)
+}
+
+::Вопрос 034::Мәні мен түрі бойынша салыстыруға арналған оператор
+{
+~\=\=
+=\=\=\=
+~\=
+~!\=
+}
+
+::Вопрос 035::JavaScript-те closure (жабу) дегеніміз..
+{
+~жаһандық айнымалы
+=сыртқы функцияның айнымалыларына қатынасы бар басқа функцияның ішінде кірістірілген функция
+~шарт ішінде жарияланған айнымалы
+~object төлсипаты
+}
+
+::Вопрос 036::Тұрақты өрнектермен жұмыс істеу әдістері
+{
+~search() және find()
+~match() және extract()
+~regex() және exec()
+=test() және ауыстыру()
+}
+
+::Вопрос 037::Шарт дұрыс болмаса да кемінде бір рет орындалатын цикл
+{
+~for
+~while
+=do...while
+~foreach
+}
+
+::Вопрос 038::Нысанда белгілі бір сипаттың бар-жоғын тексеру
+{
+~obj.checkProperty(name)
+~obj.containsProperty(name)
+=name in obj
+~obj.propertyExists(name)
+}
+
+::Вопрос 039::Массивтермен жұмыс істеу әдістері
+{
+=slice(), splice(), split()
+~cut(), copy(), paste()
+~add(), remove(), modify()
+~concat(), combine(), merge()
+}
+
+::Вопрос 040::JavaScript арқылы браузерде ағымдағы URL мекенжайын алыңыз
+{
+~window.currentURL
+~document.URL
+~browser.url
+=location.href
+}
+
+::Вопрос 041::JavaScript тілінде айнымалыны жариялау
+{
+~var x
+~let x
+~const x
+=all of the above
+}
+
+::Вопрос 042::JavaScript тіліндегі бір жолды түсініктеме
+{
+~/* түсініктеме */
+=// түсініктеме
+~түсініктеме
+~**пікір**
+}
+
+::Вопрос 043::JavaScript тіліндегі жолдардың ұзындығы
+{
+~len(myString)
+=myString.length
+~lengthOf(myString)
+~myString.size()
+}
+
+::Вопрос 044::JavaScript тілінде функцияны жариялау
+{
+=функция myFunction() {}
+~var myFunction \= function() {}
+~def myFunction() {}
+~функция \= myFunction() {}
+}
+
+::Вопрос 045::Айнымалының массив екенін тексеріңіз
+{
+~isArray(myVar)
+~myVar.isArray()
+=array.isArray(myVar)
+~myVar.typeOf('массив')
+}
+
+::Вопрос 046::JavaScript тіліндегі көп жолды түсініктеме
+{
+=/* түсініктеме */
+~// түсініктеме
+~түсініктеме
+~**пікір**
+}
+
+::Вопрос 047::Массивтен соңғы элементті жою әдісі
+{
+~array.deleteLast()
+=array.pop()
+~array.removeLast()
+~array.splice(-1,1)
+}
+
+::Вопрос 048::Шарт ақиқат болғанда код блогын орындау үшін цикл
+{
+~for loop
+=while loop
+~do-while loop
+~repeat loop
+}
+
+::Вопрос 049::Санды төмен дөңгелектеуге арналған функция
+{
+~round()
+~ceil()
+=floor()
+~truncate()
+}
+
+::Вопрос 050::Объектіні JavaScript тілінде жариялау
+{
+=var obj \= {}
+~object obj \= new Object()
+~var obj \= new Object()
+~all of the above
+}
+
+::Вопрос 051::JavaScript-те екі немесе одан да көп массивтерді біріктіру әдісі
+{
+~array.combine(arr1,arr2)
+=array.concat(arr1,arr2)
+~arr1.merge(arr2)
+~arr1+arr2
+}
+
+::Вопрос 052::JavaScript-те циклды бұзылуы
+{
+=break
+~exit
+~stop
+~halt
+}
+
+::Вопрос 053::Тінтуірді басу click оқиғалары..
+{
+=элементі басылғанда
+~элементті екі рет басқанда
+~тінтуір түймешігі элементтің үстіне басылғанда
+~тінтуірді элементтің үстіне жылжытқанда
+}
+
+::Вопрос 054::Тінтуір оқиғалары dblclick іске қосылғанда..
+{
+~click элементі
+=элементті екі рет басыңыз
+~тінтуір түймешігі элементтің үстіне басылғанда
+~тінтуірді элементтің үстіне жылжыту
+}
+
+::Вопрос 055::Тінтуір оқиғалары mousedown басу кезінде іске қосылады..
+{
+~click элементі
+~элементті екі рет басыңыз
+=элемент үстінде тінтуір түймесі басылғанда
+~тінтуірді элементтің үстіне жылжыту
+}
+
+::Вопрос 056::mouseup тінтуір оқиғалары..
+{
+~click элементі
+~элементті екі рет басыңыз
+~тінтуір түймешігі элементтің үстіне басылғанда
+=тінтуірді элементтің үстіне жылжыту
+}
+
+::Вопрос 057::Тінтуір оқиғалары mousemove кезінде..
+{
+=тінтуірді элементтің үстіне жылжыту
+~тінтуір элемент аймағына «кіргенде»
+~тінтуір элемент аймағынан "шығып" кеткенде
+~click элементі
+}
+
+::Вопрос 058::Тінтуір оқиғалары mouseover тінтуірін жылжытқанда..
+{
+~тінтуірді элементтің үстіне жылжыту
+=элемент аймағына тінтуір «енген кезде»
+~тінтуір элемент аймағынан "шығып" кеткенде
+~click элементі
+}
+
+::Вопрос 059::mouseout тінтуір оқиғалары..
+{
+~тінтуірді элементтің үстіне жылжыту
+~тінтуір элемент аймағына «кіргенде»
+=тінтуір элемент аймағынан «шығып кеткенде»
+~click элементі
+}
+
+::Вопрос 060::Пернелердегі keydown оқиғалары: JavaScript-те,..
+{
+=пернесін басыңыз
+~key шығарылымы
+~пернетақтаны ұстап тұрғанда (ескірген, пернені keydown және input арқылы ауыстырылған)
+~форма элементіне мәтін енгізу
+}
+
+::Вопрос 061::JavaScript keyup іске қосылғанда пернелер оқиғалары..
+{
+~пернесін басу
+=пернетақтаны шығару
+~пернетақтаны ұстап тұрғанда (ескірген, пернені keydown және input арқылы ауыстырылған)
+~форма элементіне мәтін енгізу
+}
+
+::Вопрос 062::JavaScript keypress пернені басу оқиғалары..
+{
+~пернесін басу
+~key шығарылымы
+=пернетақтаны ұстап тұрғанда (ескірген, пернені keydown және input арқылы ауыстырылған)
+~форма элементіне мәтін енгізу
+}
+
+::Вопрос 063::JavaScript-те input пернетақта оқиғалары енгізілгенде..
+{
+~пернесін басу
+~key шығарылымы
+~keyhold (ескірген, пернені енгізу және енгізу арқылы ауыстырылған)
+=форма элементіне мәтін енгізу
+}
+
+::Вопрос 064::Класс құру үшін қолданылады кілт сөз
+{
+=class
+~object
+~try... except
+~if()…else
+}
+
+::Вопрос 065::Жолды санға түрлендіру әдісі
+{
+=parseInt()
+~stringToNumber()
+~toInt()
+~castToInt()
+}
+
+::Вопрос 066::Суретті орнату барысында қолданылады
+{
+~enum
+~event
+=img
+~paint
+}
+
+::Вопрос 067::JavaScript-те оқиғаның көпіршігін тоқтату
+{
+=event.stopPropagation()
+~event.stop()
+~event.cancelBubble()
+~event.preventBubble()
+}
+
+::Вопрос 068::JavaScript тілінде нысанның көшірмесін жасаңыз
+{
+~var newObj \= Object.copy(oldObj)
+~var newObj \= oldObj.clone()
+=var newObj \= Object.assign({}, oldObj)
+~var newObj \= copyObject(oldObj)
+}
+
+::Вопрос 069::Санның JavaScript тілінде жұп екенін тексеріңіз
+{
+~number.isEven()
+~isEvenNumber(number)
+=number % 2 \=\=\= 0
+~isEven(number)
+}
+
+::Вопрос 070::Ағымдағы браузер терезесінің биіктігі мен JavaScript тіліндегі ені
+{
+~window.size()
+=window.innerWidth, window.innerHeight
+~window.getDimensions()
+~document.windowSize()
+}
+
+::Вопрос 071::Деректерді консольге шығару әдісі
+{
+~print()
+~display()
+~log()
+=console.log()
+}
+
+::Вопрос 072::typeof оператор массив үшін қайтарады..
+{
+~"array"
+~"object"
+~"typeof"
+="undefined"
+}
+
+::Вопрос 073::Массивті сорттау
+{
+~Struct.sort()
+~list.sort()
+~massiv.sort()
+=array.sort()
+}
+
+::Вопрос 074::Функцияға параметрлерді жіберіңіз
+{
+~Функция атынан кейін жақшада
+~Функция атынан кейін төртбұрышты жақшада
+~Функция атынан кейін бұйра жақшада
+=функция атынан кейін жақша ішінде үтірмен бөлінген
+}
+
+::Вопрос 075::JavaScript тілінде массивтің бірінші элементіне қол жеткізіңіз
+{
+~array.first()
+~array[1]
+=array[0]
+~array.get(0)
+}
+
+::Вопрос 076::Search() әдісінің мақсаты
+{
+~runtime қатесі
+~функцияларды біріктіру жолы
+=жолды іздейді және сәйкестік орнын қайтарады
+~файлдармен жұмыс істеуге арналған кірістірілген кітапхана
+}
+
+::Вопрос 077::JavaScript-те ерекше жағдайларды өңдеуге арналған кілт сөздер
+{
+~throw, try, except
+=try, catch, throw
+~exception, catch, throw
+~try, throw, finally
+}
+
+::Вопрос 078::Массивтің соңына жаңа элемент қосыңыз
+{
+~array.add(element)
+=array.push(element)
+~array.append(element)
+~array.insert(element)
+}
+
+::Вопрос 079::Массивтегі элементтер санын алу
+{
+~array.count()
+=array.length
+~array.size()
+~array.getTotal()
+}
+
+::Вопрос 080::Нысанға жаңа сипат қосыңыз
+{
+~object.addProperty("key", value)
+=object.key \= value
+~object.add("key", value)
+~object.append("key", value)
+}
+
+::Вопрос 081::Мәнді қайтару
+{
+~clear
+=return
+~void
+~sort
+}
+
+::Вопрос 082::Барлық нысан қасиеттерінің тізімін алыңыз
+{
+~object.keys(object)
+=object.properties()
+~object.getKeys()
+~Object.getAllProperties(object)
+}
+
+::Вопрос 083::JavaScript тілінде оқиға өңдеушісін тағайындаңыз
+{
+~element.attachEvent("click", myFunction)
+~element.addEventListener("click", myFunction)
+=both a and b
+~element.handleEvent("click", myFunction)
+}
+
+::Вопрос 084::Оқиға өңдегішіндегі әдепкі оқиға әрекетін болдырмау
+{
+~event.prevent()
+~event.stopDefault()
+=event.preventDefault()
+~event.cancel()
+}
+
+::Вопрос 085::Оқиға өңдегішінде оқиға түрін анықтаңыз
+{
+=event.type
+~event.eventType
+~event.action
+~event.eventType()
+}
+
+::Вопрос 086::Оқиға өңдеушісіне қосымша деректерді жіберіңіз
+{
+~оларды оқиға атауына енгізіңіз
+~оларды ғаламдық айнымалыда сақтаңыз
+=параметрлері бар кері шақыру функциясын пайдаланыңыз
+~event.data
+}
+
+::Вопрос 087::Оқиға өңдеушісін жою
+{
+~element.removeEventListener("click", myFunction)
+=element.removeEventListener("click")
+~element.removeEvent("click", myFunction)
+~element.detachEvent("click", myFunction)
+}
+
+::Вопрос 088::Асинхронды функцияны анықтау үшін қолданылатын кілт сөз
+{
+~async
+=async function
+~asynchronous
+~function async()
+}
+
+::Вопрос 089::JavaScript тіліндегі Promise – бұл..
+{
+~функцияның сәтті орындалуы
+~async функциясының орындалу маркері
+=асинхронды операцияның нәтижесін көрсететін нысан
+~Синтаксистік конвенцияны өңдеу қатесі
+}
+
+::Вопрос 090::Асинхронды тапсырмалар тізбегін орындау үшін Promise пайдаланыңыз
+{
+=promise.then().then().catch()
+~promise.catch().then().then()
+~promise.then().catch().then()
+~promise.all()
+}`;
+
+        // Переменные профиля пользователя
+        let userProfile = {
+            name: "Қолданушы",
+            testsCompleted: 0,
+            totalCorrect: 0,
+            totalQuestions: 0,
+            points: 0,
+            level: "Бастаушы",
+            history: [],
+            achievements: [] // Новое поле для достижений
+        };
+
+        // Добавляем константы достижений
+        const ACHIEVEMENTS = {
+            FIRST_TEST: {
+                id: 'first_test',
+                title: 'Бірінші қадам',
+                description: 'Бірінші тестті аяқтау',
+                icon: '🎯'
+            },
+            PERFECT_SCORE: {
+                id: 'perfect_score',
+                title: 'Тамаша!',
+                description: '100% нәтиже көрсету',
+                icon: '🌟'
+            },
+            SPEED_DEMON: {
+                id: 'speed_demon',
+                title: 'Жылдамдық',
+                description: 'Тестті орташа уақыттан екі есе жылдам аяқтау',
+                icon: '⚡'
+            },
+            CONSISTENT: {
+                id: 'consistent',
+                title: 'Тұрақтылық',
+                description: '5 тестті қатарынан 80% жоғары нәтижемен аяқтау',
+                icon: '📈'
+            },
+            MASTER: {
+                id: 'master',
+                title: 'Шебер',
+                description: '1000 ұпай жинау',
+                icon: '👑'
+            }
+        };
+
+        let questions = [];
+        let current = 0;
+        let correct = 0;
+        let selectedCount = 10;
+        let answers = [];
+        let freeMode = false;
+        let learningMode = false;
+
+        // Новые переменные
+        let timerEnabled = true;
+        let timerDuration = 300; // 5 минут по умолчанию
+        let timerInterval;
+        let timeElapsed = 0;
+        let startTime;
+        let questionTimes = []; // Время, затраченное на каждый вопрос
+        let isDarkMode = false;
+
+        // Переменные для таймера вопроса
+        let questionTimerInterval;
+        let currentQuestionStartTime;
+        let questionTimeLimit = 60; // время на вопрос по умолчанию
+
+        // Переменные для адаптивного тестирования
+        let adaptiveMode = false;
+        let difficultyLevels = {
+            easy: {
+                time: 60,
+                points: 5
+            },
+            medium: {
+                time: 45,
+                points: 10
+            },
+            hard: {
+                time: 30,
+                points: 15
+            }
+        };
+        let currentDifficulty = "medium";
+        let consecutiveCorrect = 0;
+        let consecutiveWrong = 0;
+
+        // Переменные для доступности
+        let fontSizePercent = 100;
+        let isHighContrast = false;
+
+        // Инициализация темной темы
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            document.getElementById('themeToggle').innerHTML = isDarkMode ?
+                '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+
+            // Сохраняем предпочтение пользователя
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        // Проверяем сохраненные настройки темы
+        if (localStorage.getItem('darkMode') === 'true') {
+            toggleTheme();
+        }
+
+        function parseQuestions(text) {
+            // Обновленное регулярное выражение для разбора вопросов с типами
+            const questionRegex = /::Вопрос\s+\d+(?:\s+\[(shortanswer|matching|multiplechoice)\])?::([^{]+)\{([^}]+)\}/gs;
+            const questions = [];
+            let match;
+
+            while ((match = questionRegex.exec(text)) !== null) {
+                try {
+                    const questionType = match[1] || "singlechoice"; // Тип вопроса или по умолчанию singlechoice
+                    const question = match[2].trim();
+                    const optionsText = match[3].trim();
+                    let options = [];
+                    let explanation = "";
+                    let correctAnswer = "";
+
+                    // Ищем объяснение (после ####)
+                    const explanationMatch = optionsText.match(/####(.+?)(\n|$)/s);
+                    if (explanationMatch) {
+                        explanation = explanationMatch[1].trim();
+                    }
+
+                    // Обработка в зависимости от типа вопроса
+                    if (questionType === "shortanswer") {
+                        // Формат: =%^регулярное выражение% или =точный ответ
+                        const shortAnswerMatch = optionsText.match(/=(%\^)?(.+?)(%)?(\n|$)/);
+                        if (shortAnswerMatch) {
+                            const isRegex = shortAnswerMatch[1] && shortAnswerMatch[3];
+                            correctAnswer = shortAnswerMatch[2].trim();
+                            options = [{
+                                type: "shortanswer",
+                                isRegex: isRegex
+                            }];
+                        }
+                    } else if (questionType === "matching") {
+                        // Формат: =левая часть -> правая часть
+                        const matchingRegex = /=(.+?)\s*->\s*(.+?)(\n|$)/g;
+                        let matchingMatch;
+                        const pairs = [];
+
+                        while ((matchingMatch = matchingRegex.exec(optionsText)) !== null) {
+                            pairs.push({
+                                left: matchingMatch[1].trim(),
+                                right: matchingMatch[2].trim()
+                            });
+                        }
+
+                        if (pairs.length > 0) {
+                            options = [{
+                                type: "matching",
+                                pairs: pairs
+                            }];
+                        }
+                    } else if (questionType === "multiplechoice") {
+                        // Формат: ~%процент%текст или =%процент%текст
+                        const multipleChoiceRegex = /([~=])(%(-?\d+)%)?(.+?)(\n|$)/g;
+                        let choiceMatch;
+
+                        while ((choiceMatch = multipleChoiceRegex.exec(optionsText)) !== null) {
+                            if (choiceMatch[0].trim().startsWith('####')) continue;
+
+                            const isCorrect = choiceMatch[1] === '=';
+                            const weight = choiceMatch[3] ? parseInt(choiceMatch[3]) : (isCorrect ? 100 : 0);
+
+                            options.push({
+                                text: choiceMatch[4].trim(),
+                                correct: isCorrect,
+                                weight: weight
+                            });
+                        }
+                    } else {
+                        // Стандартный вопрос с одним правильным ответом
+                        const lines = optionsText.split('\n');
+                        for (const line of lines) {
+                            const trimmedLine = line.trim();
+                            if (!trimmedLine || trimmedLine.startsWith('####')) continue;
+
+                            // Проверяем, начинается ли строка с ~ или =
+                            if (trimmedLine.startsWith('~') || trimmedLine.startsWith('=')) {
+                                options.push({
+                                    text: trimmedLine.substring(1).trim(),
+                                    correct: trimmedLine.startsWith('=')
+                                });
+                            }
+                        }
+                    }
+
+                    // Дополнительная проверка для первого вопроса
+                    if (question.includes("JavaScipt") && options.length < 4) {
+                        console.warn("Для первого вопроса найдено меньше 4 вариантов:", options.length);
+                        console.log("Исходный текст вариантов:", optionsText);
+
+                        // Принудительная установка 4 вариантов для первого вопроса
+                        options.length = 0; // Очищаем неполный список
+                        options.push({
+                            text: "for (шарт; инициализация; әрбір итерациядан кейінгі өрнек) (//цикл денесі)",
+                            correct: false
+                        });
+                        options.push({
+                            text: "for (әрбір итерациядан кейінгі өрнек; инициализация; шарт;) [//цикл денесі]",
+                            correct: false
+                        });
+                        options.push({
+                            text: "for (инициализация; шарт; әрбір итерациядан кейінгі өрнек) {//цикл денесі}",
+                            correct: true
+                        });
+                        options.push({
+                            text: "for (инициализация; әрбір итерациядан кейінгі өрнек; шарт;) </loop body>",
+                            correct: false
+                        });
+                    }
+
+                    if (question && (options.length > 0 || correctAnswer)) {
+                        questions.push({
+                            question,
+                            options,
+                            type: questionType,
+                            explanation: explanation || "Бұл сұраққа түсіндірме жоқ.",
+                            correctAnswer
+                        });
+                        console.log(`Добавлен вопрос '${question}' типа ${questionType}`);
+                    }
+                } catch (error) {
+                    console.error("Ошибка при разборе вопроса:", error);
+                }
+            }
+
+            console.log(`Всего разобрано вопросов: ${questions.length}`);
+            return questions;
+        }
+
+        function startTest() {
+            selectedCount = parseInt(document.getElementById('questionCount').value);
+            if (isNaN(selectedCount) || selectedCount < 1) {
+                selectedCount = 10;
+            }
+
+            // Получаем имя пользователя
+            const userName = document.getElementById('userNameInput').value;
+            if (userName) {
+                userProfile.name = userName;
+            }
+
+            freeMode = document.getElementById('freeMode').checked;
+            learningMode = document.getElementById('learningMode').checked;
+            const randomize = document.getElementById('randomOrder').checked;
+            const showProfile = document.getElementById('showProfile').checked;
+
+            // Настройки таймера
+            timerEnabled = document.getElementById('timerEnabled').checked;
+            timerDuration = parseInt(document.getElementById('timerDuration').value);
+
+            // Парсим встроенные вопросы
+            questions = parseQuestions(rawText);
+
+            if (questions.length === 0) {
+                alert("Не удалось загрузить вопросы.");
+                return;
+            }
+
+            if (questions.length < selectedCount) {
+                selectedCount = questions.length;
+                console.log("Количество вопросов уменьшено до", selectedCount);
+            }
+
+            if (randomize) questions = shuffleArray(questions);
+            questions = questions.slice(0, selectedCount);
+
+            current = 0;
+            correct = 0;
+            answers = Array(questions.length).fill(null);
+            questionTimes = Array(questions.length).fill(0);
+            timeElapsed = 0;
+            startTime = new Date();
+
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('profileContainer').style.display = showProfile ? 'block' : 'none';
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('homeBtn').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'none';
+
+            buildNavigator();
+            showQuestion();
+            startTimer();
+            updateProgressBar();
+
+            // Сохраняем профиль
+            saveUserProfile();
+
+            // Добавляем новые настройки
+            adaptiveMode = document.getElementById('adaptiveMode').checked;
+
+            // Сбрасываем уровень сложности в начале теста
+            if (adaptiveMode) {
+                currentDifficulty = "medium";
+                consecutiveCorrect = 0;
+                consecutiveWrong = 0;
+            }
+        }
+
+        function startTimer() {
+            if (!timerEnabled) return;
+
+            const timerDisplay = document.getElementById('timer');
+            clearInterval(timerInterval);
+
+            const updateTimerDisplay = () => {
+                timeElapsed = Math.floor((new Date() - startTime) / 1000);
+                const timeLeft = timerDuration - timeElapsed;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.innerHTML = "00:00";
+                    finishTest("Уақыт бітті!");
+                    return;
+                }
+
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.innerHTML = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Визуальное предупреждение
+                if (timeLeft < 60) {
+                    timerDisplay.className = "timer danger";
+                } else if (timeLeft < 120) {
+                    timerDisplay.className = "timer warning";
+                } else {
+                    timerDisplay.className = "timer";
+                }
+            };
+
+            updateTimerDisplay();
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+        }
+
+        function updateProgressBar() {
+            const percentage = ((current + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+
+        function showQuestion() {
+            const q = questions[current];
+
+            // Отображаем индикатор сложности для адаптивного режима
+            let difficultyText = "";
+            if (adaptiveMode) {
+                const difficultyLabels = {
+                    easy: "Жеңіл",
+                    medium: "Орташа",
+                    hard: "Қиын"
+                };
+
+                const difficultyClasses = {
+                    easy: "difficulty-easy",
+                    medium: "difficulty-medium",
+                    hard: "difficulty-hard"
+                };
+
+                difficultyText = `<span class="difficulty-indicator ${difficultyClasses[currentDifficulty]}">${difficultyLabels[currentDifficulty]}</span>`;
+            }
+
+            document.getElementById('questionBox').innerHTML = `
+                <span>Сұрақ ${current + 1}: ${q.question}</span>
+                ${difficultyText}
+            `;
+
+            const selected = answers[current];
+            const answersContainer = document.getElementById('answers');
+
+            // Очищаем контейнер
+            answersContainer.innerHTML = '';
+
+            // Показываем интерфейс в зависимости от типа вопроса
+            switch (q.type) {
+                case "shortanswer":
+                    // Поле для ввода текста
+                    answersContainer.innerHTML = `
+                        <input type="text" class="short-answer-input" id="shortAnswerInput" 
+                               placeholder="Жауапты енгізіңіз" value="${selected || ''}">
+                    `;
+                    break;
+
+                case "matching":
+                    if (q.options[0] && q.options[0].pairs) {
+                        // Создаем интерфейс для сопоставления
+                        const pairs = q.options[0].pairs;
+                        const matchingHTML = [];
+
+                        // Создаем массив правых частей для перемешивания
+                        const rightParts = pairs.map(pair => pair.right);
+                        const shuffledRight = shuffleArray([...rightParts]);
+
+                        // Если уже есть ответ, используем его
+                        const userMatches = selected || Array(pairs.length).fill(null);
+
+                        pairs.forEach((pair, idx) => {
+                            let selectedIdx = -1;
+                            if (userMatches[idx] !== null) {
+                                selectedIdx = rightParts.indexOf(userMatches[idx]);
+                            }
+
+                            // Создаем селект для каждой пары
+                            const selectOptions = shuffledRight.map((option, optIdx) => {
+                                const optionValue = rightParts.indexOf(option);
+                                const isSelected = optionValue === selectedIdx ? 'selected' : '';
+                                return `<option value="${optionValue}" ${isSelected}>${option}</option>`;
+                            }).join('');
+
+                            matchingHTML.push(`
+                                <div class="matching-pair">
+                                    <div class="matching-left">${pair.left}</div>
+                                    <div class="matching-divider"></div>
+                                    <select class="matching-select" data-index="${idx}">
+                                        <option value="-1">-- Таңдаңыз --</option>
+                                        ${selectOptions}
+                                    </select>
+                                </div>
+                            `);
+                        });
+
+                        answersContainer.innerHTML = `
+                            <div class="matching-container">
+                                ${matchingHTML.join('')}
+                            </div>
+                        `;
+
+                        // Добавляем слушатели событий для выпадающих списков
+                        document.querySelectorAll('.matching-select').forEach(select => {
+                            select.addEventListener('change', function() {
+                                const idx = parseInt(this.dataset.index);
+                                const selectedIdx = parseInt(this.value);
+
+                                // Обновляем массив ответов
+                                if (!Array.isArray(answers[current])) {
+                                    answers[current] = Array(pairs.length).fill(null);
+                                }
+
+                                answers[current][idx] = selectedIdx !== -1 ? rightParts[selectedIdx] : null;
+                            });
+                        });
+                    }
+                    break;
+
+                case "multiplechoice":
+                    // Множественный выбор с чекбоксами
+                    answersContainer.innerHTML = q.options.map((opt, idx) => {
+                        const checked = selected && selected.includes(idx) ? 'checked' : '';
+                        let className = '';
+                        if (freeMode && selected !== null) {
+                            className = opt.correct ? 'correct' : (selected.includes(idx) ? 'incorrect' : '');
+                        }
+                        return `<label class="${className}"><input type="checkbox" name="multiAnswer" value="${idx}" ${checked}> ${opt.text}</label>`;
+                    }).join('');
+                    break;
+
+                default:
+                    // Стандартный вопрос с одним правильным ответом
+                    answersContainer.innerHTML = q.options.map((opt, idx) => {
+                        const checked = selected === idx ? 'checked' : '';
+                        let className = '';
+                        if (freeMode && selected !== null) {
+                            className = opt.correct ? 'correct' : (idx === selected ? 'incorrect' : '');
+                        }
+                        return `<label class="${className}"><input type="radio" name="answer" value="${idx}" ${checked}> ${opt.text}</label>`;
+                    }).join('');
+            }
+
+            document.getElementById('progress').innerText = `${current + 1} / ${questions.length}`;
+
+            // Настройка объяснения для режима обучения
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('explanationContent').innerText = q.explanation || "Для этого вопроса нет объяснения.";
+
+            // Показываем кнопку объяснения, если включен режим обучения
+            const showExplanationBtn = document.getElementById('showExplanationBtn');
+            showExplanationBtn.style.display = learningMode ? 'block' : 'none';
+
+            highlightNavigator();
+            updateProgressBar();
+
+            // Запускаем таймер для текущего вопроса
+            startQuestionTimer();
+        }
+
+        function toggleExplanation() {
+            const explanation = document.getElementById('explanation');
+            const isVisible = explanation.style.display === 'block';
+            explanation.style.display = isVisible ? 'none' : 'block';
+
+            // Меняем текст кнопки
+            const btn = document.getElementById('showExplanationBtn');
+            btn.innerHTML = isVisible ?
+                '<i class="fas fa-lightbulb"></i> Түсіндірмені көру' :
+                '<i class="fas fa-eye-slash"></i> Түсіндірмені жасыру';
+        }
+
+        function nextQuestion() {
+            clearInterval(questionTimerInterval);
+            const questionEndTime = new Date();
+            questionTimes[current] = Math.floor((questionEndTime - currentQuestionStartTime) / 1000);
+
+            // Сохраняем ответ
+            saveAnswer();
+
+            // Проверяем правильность ответа для адаптивного режима
+            if (adaptiveMode) {
+                const isCorrect = checkCurrentAnswerCorrect();
+                updateDifficulty(isCorrect);
+            }
+
+            if (current < questions.length - 1) {
+                current++;
+                showQuestion();
+            } else if (!freeMode) {
+                finishTest();
+            }
+        }
+
+        function prevQuestion() {
+            saveAnswer();
+            if (current > 0) {
+                current--;
+                showQuestion();
+            }
+        }
+
+        function saveAnswer() {
+            const q = questions[current];
+
+            switch (q.type) {
+                case "shortanswer":
+                    const input = document.getElementById('shortAnswerInput');
+                    if (input) {
+                        answers[current] = input.value.trim();
+                    }
+                    break;
+
+                case "matching":
+                    // Ответы сохраняются по мере выбора в обработчиках событий
+                    break;
+
+                case "multiplechoice":
+                    const selectedCheckboxes = document.querySelectorAll('input[name="multiAnswer"]:checked');
+                    if (selectedCheckboxes.length > 0) {
+                        answers[current] = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
+                    }
+                    break;
+
+                default:
+                    const selected = document.querySelector('input[name="answer"]:checked');
+                    if (selected) {
+                        answers[current] = parseInt(selected.value);
+                    }
+            }
+        }
+
+        function evaluateResults() {
+            correct = 0;
+            for (let i = 0; i < questions.length; i++) {
+                const answer = answers[i];
+                const q = questions[i];
+
+                if (answer === null || answer === undefined) continue;
+
+                switch (q.type) {
+                    case "shortanswer":
+                        // Проверка текстового ответа
+                        if (q.correctAnswer) {
+                            const userAnswer = answer.toLowerCase();
+                            if (q.options[0].isRegex) {
+                                // Проверка по регулярному выражению
+                                const regex = new RegExp(q.correctAnswer, 'i');
+                                if (regex.test(userAnswer)) correct++;
+                            } else {
+                                // Точное соответствие
+                                if (userAnswer === q.correctAnswer.toLowerCase()) correct++;
+                            }
+                        }
+                        break;
+
+                    case "matching":
+                        // Проверка сопоставлений
+                        if (Array.isArray(answer) && q.options[0] && q.options[0].pairs) {
+                            const pairs = q.options[0].pairs;
+                            let allCorrect = true;
+
+                            for (let j = 0; j < pairs.length; j++) {
+                                if (answer[j] !== pairs[j].right) {
+                                    allCorrect = false;
+                                    break;
+                                }
+                            }
+
+                            if (allCorrect) correct++;
+                        }
+                        break;
+
+                    case "multiplechoice":
+                        // Проверка множественного выбора
+                        if (Array.isArray(answer)) {
+                            let partialScore = 0;
+
+                            // Проверяем каждый вариант
+                            q.options.forEach((opt, idx) => {
+                                const userSelected = answer.includes(idx);
+                                if (opt.correct && userSelected) {
+                                    // Правильно выбранный
+                                    partialScore += opt.weight || 100;
+                                } else if (!opt.correct && userSelected) {
+                                    // Неправильно выбранный
+                                    partialScore += opt.weight || 0;
+                                }
+                            });
+
+                            // Если набрали 100% или больше, засчитываем как правильный
+                            if (partialScore >= 100) correct++;
+                        }
+                        break;
+
+                    default:
+                        // Стандартный вопрос с одним правильным ответом
+                        if (typeof answer === 'number' && q.options[answer] && q.options[answer].correct) {
+                            correct++;
+                        }
+                }
+            }
+
+            return correct;
+        }
+
+        function finishTest(message) {
+            clearInterval(timerInterval);
+
+            // Вычисляем результаты
+            const score = evaluateResults();
+            const percentage = Math.round((score / questions.length) * 100);
+            const totalTime = timeElapsed;
+            const minutes = Math.floor(totalTime / 60);
+            const seconds = totalTime % 60;
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Обновляем профиль пользователя
+            userProfile.testsCompleted++;
+            userProfile.totalCorrect += score;
+            userProfile.totalQuestions += questions.length;
+
+            // Начисляем очки: базовые очки + бонус за скорость + бонус за сложность
+            const basePoints = score * 10;
+            const timeBonus = Math.max(0, Math.floor(timerDuration - totalTime) / 10);
+            const difficultyBonus = questions.length;
+            const earnedPoints = basePoints + timeBonus + difficultyBonus;
+            userProfile.points += earnedPoints;
+
+            // Сохраняем результат теста в историю
+            userProfile.history.push({
+                date: new Date().toISOString(),
+                score: score,
+                total: questions.length,
+                percentage: percentage,
+                time: totalTime,
+                earnedPoints: earnedPoints
+            });
+
+            // Обновляем отображение профиля и сохраняем
+            updateProfileDisplay();
+            saveUserProfile();
+
+            // Скрываем секцию теста
+            document.getElementById('quiz').style.display = 'none';
+
+            // Если есть сообщение (например, "Время вышло"), показываем его
+            if (message) {
+                document.getElementById('result').innerHTML = message;
+            }
+
+            document.getElementById('result').innerHTML += `<h2>Тест аяқталды!</h2>`;
+            document.getElementById('homeBtn').style.display = 'block';
+
+            // Показываем подробные результаты
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('resultsScore').innerHTML = `Нәтиже: ${score}/${questions.length} (${percentage}%)`;
+            document.getElementById('resultsTime').innerHTML = `Уақыт: ${timeString}`;
+
+            // Создаем график результатов
+            createResultsChart(score, questions.length - score);
+
+            // Добавляем этого пользователя в таблицу студентов, если его там еще нет
+            if (userProfile.name && userProfile.name !== "Қолданушы") {
+                loadStudentsData();
+
+                // Ищем, есть ли уже такой студент
+                const existingStudentIndex = studentsData.findIndex(s => s.name === userProfile.name);
+
+                if (existingStudentIndex >= 0) {
+                    // Обновляем данные существующего студента
+                    const student = studentsData[existingStudentIndex];
+                    student.testsCompleted++;
+
+                    // Обновляем средний балл
+                    const oldTotal = student.averageScore * (student.testsCompleted - 1);
+                    const newAverage = (oldTotal + percentage) / student.testsCompleted;
+                    student.averageScore = Math.round(newAverage);
+
+                    // Добавляем время
+                    student.totalTime += totalTime;
+
+                    // Обновляем уровень
+                    student.level = userProfile.level;
+                } else {
+                    // Добавляем нового студента
+                    studentsData.push({
+                        name: userProfile.name,
+                        testsCompleted: 1,
+                        averageScore: percentage,
+                        totalTime: totalTime,
+                        level: userProfile.level
+                    });
+                }
+
+                // Сохраняем обновленные данные
+                saveStudentsData();
+            }
+
+            // Проверяем достижения после завершения теста
+            checkAchievements();
+        }
+
+        function createResultsChart(correct, incorrect) {
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+
+            // Уничтожаем существующий график, если он есть
+            if (window.resultsChartInstance) {
+                window.resultsChartInstance.destroy();
+            }
+
+            window.resultsChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Дұрыс', 'Қате'],
+                    datasets: [{
+                        data: [correct, incorrect],
+                        backgroundColor: [
+                            getComputedStyle(document.documentElement).getPropertyValue('--success-color'),
+                            getComputedStyle(document.documentElement).getPropertyValue('--danger-color')
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-color')
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function savePDF() {
+            const {
+                jsPDF
+            } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Заголовок
+            doc.setFontSize(20);
+            doc.text("Тест нәтижесі", 105, 20, {
+                align: 'center'
+            });
+
+            // Основные результаты
+            doc.setFontSize(14);
+            const score = evaluateResults();
+            const percentage = Math.round((score / questions.length) * 100);
+            doc.text(`Нәтиже: ${score}/${questions.length} (${percentage}%)`, 20, 40);
+
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            doc.text(`Жұмсалған уақыт: ${minutes}:${seconds.toString().padStart(2, '0')}`, 20, 50);
+
+            // Информация о каждом вопросе
+            doc.setFontSize(12);
+            doc.text("Сұрақтар бойынша толық мәлімет:", 20, 70);
+
+            let yPos = 80;
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i].question;
+                const userAnswer = answers[i] !== null ? questions[i].options[answers[i]].text : "Жауап жоқ";
+                const isCorrect = answers[i] !== null && questions[i].options[answers[i]].correct;
+
+                // Если выходим за границы страницы, добавляем новую
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                // Текст вопроса (обрезаем, если слишком длинный)
+                const shortQuestion = question.length > 70 ? question.substring(0, 67) + "..." : question;
+                doc.text(`${i+1}. ${shortQuestion}`, 20, yPos);
+                yPos += 7;
+
+                // Ответ пользователя
+                doc.text(`Жауап: ${userAnswer.substr(0, 70)}`, 25, yPos);
+                yPos += 7;
+
+                // Статус ответа
+                doc.text(`Статус: ${isCorrect ? "Дұрыс ✓" : "Қате ✗"}`, 25, yPos);
+                yPos += 12;
+            }
+
+            // Подпись и дата
+            const today = new Date();
+            doc.setFontSize(10);
+            doc.text(`Құрылған күні: ${today.toLocaleDateString()}`, 20, 285);
+
+            // Сохраняем документ
+            doc.save("test_results.pdf");
+        }
+
+        function showDetailedResults() {
+            // Текущая реализация подробных результатов - простое уведомление
+            // Здесь можно добавить более подробные результаты в будущем
+            alert("Бұл функция әзірленуде. Көп ұзамай қол жетімді болады.");
+        }
+
+        function buildNavigator() {
+            const nav = document.getElementById('questionNavigator');
+            nav.innerHTML = questions.map((_, idx) => `
+      <button class="nav-btn" onclick="goToQuestion(${idx})">${idx + 1}</button>
+    `).join('');
+        }
+
+        function highlightNavigator() {
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach((btn, idx) => {
+                btn.className = 'nav-btn';
+                if (idx === current) btn.classList.add('active');
+                if (answers[idx] !== null && questions[idx].options[answers[idx]]) {
+                    if (questions[idx].options[answers[idx]].correct) {
+                        btn.classList.add('correct');
+                    } else {
+                        btn.classList.add('incorrect');
+                    }
+                }
+            });
+        }
+
+        function goToQuestion(index) {
+            saveAnswer();
+            current = index;
+            showQuestion();
+        }
+
+        function shuffleArray(array) {
+            const result = [...array];
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+            return result;
+        }
+
+        // Загрузить профиль из localStorage
+        function loadUserProfile() {
+            const savedProfile = localStorage.getItem('jsTestUserProfile');
+            if (savedProfile) {
+                userProfile = JSON.parse(savedProfile);
+                updateProfileDisplay();
+            }
+        }
+
+        // Сохранить профиль в localStorage
+        function saveUserProfile() {
+            localStorage.setItem('jsTestUserProfile', JSON.stringify(userProfile));
+        }
+
+        // Обновить отображение профиля
+        function updateProfileDisplay() {
+            const nameField = document.getElementById('profileName');
+            const avatarField = document.getElementById('profileAvatar');
+            const levelField = document.getElementById('profileLevel');
+            const testCountField = document.getElementById('profileTestCount');
+            const accuracyField = document.getElementById('profileAccuracy');
+            const pointsField = document.getElementById('profilePoints');
+            const achievementsField = document.getElementById('profileAchievements');
+
+            nameField.innerText = userProfile.name;
+
+            // Инициалы для аватара
+            const nameParts = userProfile.name.split(' ');
+            let initials = '';
+            if (nameParts.length > 0) {
+                initials = nameParts[0].charAt(0);
+                if (nameParts.length > 1) {
+                    initials += nameParts[1].charAt(0);
+                }
+            } else {
+                initials = 'JS';
+            }
+            avatarField.innerText = initials.toUpperCase();
+
+            // Уровень на основе очков
+            let level = "Бастаушы";
+            if (userProfile.points >= 1000) level = "Сарапшы";
+            else if (userProfile.points >= 500) level = "Орташа";
+            else if (userProfile.points >= 200) level = "Білгір";
+            userProfile.level = level;
+            levelField.innerText = `Деңгей: ${level}`;
+
+            // Статистика
+            testCountField.innerText = userProfile.testsCompleted;
+
+            const accuracy = userProfile.totalQuestions > 0 ?
+                Math.round((userProfile.totalCorrect / userProfile.totalQuestions) * 100) :
+                0;
+            accuracyField.innerText = `${accuracy}%`;
+
+            pointsField.innerText = userProfile.points;
+
+            // Отображение достижений
+            if (achievementsField) {
+                if (userProfile.achievements.length > 0) {
+                    achievementsField.innerHTML = userProfile.achievements.map(achievement => `
+                        <div class="achievement-item">
+                            <span class="achievement-icon">${achievement.icon}</span>
+                            <div class="achievement-details">
+                                <h4>${achievement.title}</h4>
+                                <p>${achievement.description}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    achievementsField.innerHTML = '<p class="no-achievements">Әзірше жетістіктер жоқ</p>';
+                }
+            }
+        }
+
+        // Загрузка пользовательских настроек
+        function loadUserSettings() {
+            // Загружаем размер шрифта
+            const savedFontSize = localStorage.getItem('jsTestFontSize');
+            if (savedFontSize) {
+                fontSizePercent = parseInt(savedFontSize);
+                document.documentElement.style.fontSize = `${fontSizePercent}%`;
+                document.getElementById('currentFontSize').textContent = `${fontSizePercent}%`;
+            }
+
+            // Загружаем высококонтрастный режим
+            const highContrastEnabled = localStorage.getItem('jsTestHighContrast') === 'true';
+            if (highContrastEnabled) {
+                document.body.classList.add('high-contrast');
+                document.getElementById('highContrastToggle').checked = true;
+                isHighContrast = true;
+            }
+
+            // Загружаем профиль
+            loadUserProfile();
+        }
+
+        // Функции доступности
+        function toggleAccessibilityPanel() {
+            const panel = document.getElementById('accessibilityPanel');
+            panel.classList.toggle('open');
+        }
+
+        function changeFontSize(direction) {
+            // Изменение от 70% до 200%
+            fontSizePercent += direction * 10;
+            if (fontSizePercent < 70) fontSizePercent = 70;
+            if (fontSizePercent > 200) fontSizePercent = 200;
+
+            document.documentElement.style.fontSize = `${fontSizePercent}%`;
+            document.getElementById('currentFontSize').textContent = `${fontSizePercent}%`;
+
+            localStorage.setItem('jsTestFontSize', fontSizePercent);
+        }
+
+        function toggleHighContrast() {
+            isHighContrast = document.getElementById('highContrastToggle').checked;
+            document.body.classList.toggle('high-contrast', isHighContrast);
+            localStorage.setItem('jsTestHighContrast', isHighContrast);
+        }
+
+        // Обновлённый таймер для вопроса
+        function startQuestionTimer() {
+            clearInterval(questionTimerInterval);
+
+            // Устанавливаем таймер в зависимости от сложности
+            if (adaptiveMode) {
+                questionTimeLimit = difficultyLevels[currentDifficulty].time;
+            } else {
+                questionTimeLimit = 60; // 1 минута на вопрос по умолчанию
+            }
+
+            currentQuestionStartTime = new Date();
+            const questionTimerDisplay = document.getElementById('questionTimer');
+
+            const updateQuestionTimer = () => {
+                const elapsed = Math.floor((new Date() - currentQuestionStartTime) / 1000);
+                const timeLeft = questionTimeLimit - elapsed;
+
+                if (timeLeft <= 0) {
+                    clearInterval(questionTimerInterval);
+                    questionTimerDisplay.innerHTML = "Уақыт бітті!";
+
+                    // Автоматически переходим к следующему вопросу
+                    if (!freeMode) {
+                        setTimeout(nextQuestion, 1000);
+                    }
+                    return;
+                }
+
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                questionTimerDisplay.innerHTML = `Сұрақ уақыты: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Визуальное предупреждение
+                if (timeLeft < 10) {
+                    questionTimerDisplay.style.color = 'var(--danger-color)';
+                } else if (timeLeft < 20) {
+                    questionTimerDisplay.style.color = 'var(--warning-color)';
+                } else {
+                    questionTimerDisplay.style.color = 'var(--text-color)';
+                }
+            };
+
+            updateQuestionTimer();
+            questionTimerInterval = setInterval(updateQuestionTimer, 1000);
+        }
+
+        // Функция для обновления сложности в адаптивном режиме
+        function updateDifficulty(isCorrect) {
+            if (!adaptiveMode) return;
+
+            if (isCorrect) {
+                consecutiveCorrect++;
+                consecutiveWrong = 0;
+
+                // Повышаем сложность после 2 правильных ответов подряд
+                if (consecutiveCorrect >= 2) {
+                    if (currentDifficulty === "easy") {
+                        currentDifficulty = "medium";
+                    } else if (currentDifficulty === "medium") {
+                        currentDifficulty = "hard";
+                    }
+                    consecutiveCorrect = 0;
+                }
+            } else {
+                consecutiveWrong++;
+                consecutiveCorrect = 0;
+
+                // Понижаем сложность после 2 неправильных ответов подряд
+                if (consecutiveWrong >= 2) {
+                    if (currentDifficulty === "hard") {
+                        currentDifficulty = "medium";
+                    } else if (currentDifficulty === "medium") {
+                        currentDifficulty = "easy";
+                    }
+                    consecutiveWrong = 0;
+                }
+            }
+
+            console.log(`Сложность изменена на: ${currentDifficulty}`);
+        }
+
+        // Функция для проверки правильности текущего ответа
+        function checkCurrentAnswerCorrect() {
+            const answer = answers[current];
+            const q = questions[current];
+
+            if (answer === null || answer === undefined) return false;
+
+            switch (q.type) {
+                case "shortanswer":
+                    if (q.correctAnswer) {
+                        const userAnswer = answer.toLowerCase();
+                        if (q.options[0].isRegex) {
+                            const regex = new RegExp(q.correctAnswer, 'i');
+                            return regex.test(userAnswer);
+                        } else {
+                            return userAnswer === q.correctAnswer.toLowerCase();
+                        }
+                    }
+                    return false;
+
+                case "matching":
+                    if (Array.isArray(answer) && q.options[0] && q.options[0].pairs) {
+                        const pairs = q.options[0].pairs;
+                        let allCorrect = true;
+
+                        for (let j = 0; j < pairs.length; j++) {
+                            if (answer[j] !== pairs[j].right) {
+                                allCorrect = false;
+                                break;
+                            }
+                        }
+
+                        return allCorrect;
+                    }
+                    return false;
+
+                case "multiplechoice":
+                    if (Array.isArray(answer)) {
+                        let partialScore = 0;
+
+                        q.options.forEach((opt, idx) => {
+                            const userSelected = answer.includes(idx);
+                            if (opt.correct && userSelected) {
+                                partialScore += opt.weight || 100;
+                            } else if (!opt.correct && userSelected) {
+                                partialScore += opt.weight || 0;
+                            }
+                        });
+
+                        return partialScore >= 100;
+                    }
+                    return false;
+
+                default:
+                    return typeof answer === 'number' && q.options[answer] && q.options[answer].correct;
+            }
+        }
+
+        // Инициализация на загрузке страницы
+        window.addEventListener('DOMContentLoaded', loadUserSettings);
+
+        // Переменные для режима преподавателя
+        let isTeacherMode = false;
+        let studentsData = [];
+
+        // Загрузка данных студентов
+        function loadStudentsData() {
+            const savedData = localStorage.getItem('jsTestStudentsData');
+            if (savedData) {
+                studentsData = JSON.parse(savedData);
+            }
+
+            // Если данных нет, добавляем примеры
+            if (studentsData.length === 0) {
+                studentsData = [{
+                    name: "Асанов Асан",
+                    testsCompleted: 5,
+                    averageScore: 85,
+                    totalTime: 1200,
+                    level: "Орташа"
+                }, {
+                    name: "Болатов Болат",
+                    testsCompleted: 3,
+                    averageScore: 92,
+                    totalTime: 900,
+                    level: "Сарапшы"
+                }, {
+                    name: "Серикова Сәуле",
+                    testsCompleted: 7,
+                    averageScore: 78,
+                    totalTime: 1800,
+                    level: "Білгір"
+                }];
+                saveStudentsData();
+            }
+        }
+
+        function saveStudentsData() {
+            localStorage.setItem('jsTestStudentsData', JSON.stringify(studentsData));
+        }
+
+        function updateStudentsTable() {
+            const tableBody = document.getElementById('studentsTableBody');
+            tableBody.innerHTML = '';
+
+            studentsData.forEach(student => {
+                const row = document.createElement('tr');
+
+                const minutesTotal = Math.floor(student.totalTime / 60);
+                const secondsTotal = student.totalTime % 60;
+                const timeString = `${minutesTotal}:${secondsTotal.toString().padStart(2, '0')}`;
+
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.testsCompleted}</td>
+                    <td>${student.averageScore}%</td>
+                    <td>${timeString}</td>
+                    <td>${student.level}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Инициализация режима преподавателя
+        document.getElementById('teacherModeBtn').addEventListener('click', toggleTeacherMode);
+
+        function toggleTeacherMode() {
+            isTeacherMode = !isTeacherMode;
+
+            if (isTeacherMode) {
+                // Показываем панель преподавателя
+                document.getElementById('teacherPanel').style.display = 'block';
+                document.getElementById('teacherModeBtn').innerHTML = '<i class="fas fa-times"></i>';
+
+                // Загружаем и отображаем данные студентов
+                loadStudentsData();
+                updateStudentsTable();
+            } else {
+                // Скрываем панель преподавателя
+                document.getElementById('teacherPanel').style.display = 'none';
+                document.getElementById('teacherModeBtn').innerHTML = '<i class="fas fa-chalkboard-teacher"></i>';
+            }
+        }
+
+        // Экспорт данных для преподавателя
+        function exportTeacherData(format) {
+            if (format === 'pdf') {
+                exportToPDF();
+            } else if (format === 'excel') {
+                exportToExcel();
+            }
+        }
+
+        function exportToPDF() {
+            const {
+                jsPDF
+            } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Заголовок
+            doc.setFontSize(18);
+            doc.text("Отчет по результатам тестирования", 105, 20, {
+                align: 'center'
+            });
+
+            // Дата отчета
+            doc.setFontSize(12);
+            const today = new Date();
+            doc.text(`Дата: ${today.toLocaleDateString()}`, 20, 30);
+
+            // Таблица данных
+            doc.setFontSize(10);
+            doc.text("Имя", 20, 40);
+            doc.text("Тесты", 80, 40);
+            doc.text("Ср. балл", 110, 40);
+            doc.text("Время", 140, 40);
+            doc.text("Уровень", 170, 40);
+
+            // Разделительная линия
+            doc.line(20, 43, 190, 43);
+
+            // Данные студентов
+            let yPos = 50;
+            studentsData.forEach((student, idx) => {
+                const minutesTotal = Math.floor(student.totalTime / 60);
+                const secondsTotal = student.totalTime % 60;
+                const timeString = `${minutesTotal}:${secondsTotal.toString().padStart(2, '0')}`;
+
+                doc.text(student.name, 20, yPos);
+                doc.text(student.testsCompleted.toString(), 80, yPos);
+                doc.text(`${student.averageScore}%`, 110, yPos);
+                doc.text(timeString, 140, yPos);
+                doc.text(student.level, 170, yPos);
+
+                yPos += 10;
+
+                // Если страница заполнена, добавляем новую
+                if (yPos > 280 && idx < studentsData.length - 1) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+            });
+
+            // Сохраняем PDF
+            doc.save("students_report.pdf");
+        }
+
+        function exportToExcel() {
+            // В реальном приложении здесь был бы код для создания Excel-файла
+            // Это можно сделать с использованием библиотек, таких как xlsx.js
+            // Здесь просто имитируем процесс
+            alert("Excel экспорты құрылуда... (Бұл функцияны іске асыру үшін xlsx.js библиотекасын қосу керек)");
+        }
+
+        function generateGroupReport() {
+            // В реальном приложении здесь был бы код для создания группового отчета
+            // Например, с диаграммами и графиками результатов
+            alert("Топтық есеп құрылуда... (Толық іске асыру үшін Chart.js және басқа компоненттерді қосу керек)");
+        }
+
+        // Функция для сертификата
+        function showCertificate() {
+            // Заполняем данные сертификата
+            document.getElementById('certificateName').textContent = userProfile.name;
+
+            const score = evaluateResults();
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('certificateScore').textContent = `Нәтиже: ${percentage}%`;
+
+            const today = new Date();
+            document.getElementById('certificateDate').textContent = `Күні: ${today.toLocaleDateString()}`;
+
+            // Показываем сертификат
+            document.getElementById('certificateContainer').style.display = 'flex';
+        }
+
+        function closeCertificate() {
+            document.getElementById('certificateContainer').style.display = 'none';
+        }
+
+        function downloadCertificate() {
+            const {
+                jsPDF
+            } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // Создаем сертификат в PDF
+            // В реальном приложении здесь бы использовалась canvas для создания красивого сертификата
+            doc.setFillColor(255, 240, 200);
+            doc.rect(0, 0, 297, 210, 'F');
+
+            doc.setDrawColor(255, 200, 0);
+            doc.setLineWidth(5);
+            doc.rect(10, 10, 277, 190);
+
+            doc.setFontSize(30);
+            doc.setTextColor(50, 50, 50);
+            doc.text("СЕРТИФИКАТ", 148.5, 40, {
+                align: 'center'
+            });
+
+            doc.setFontSize(20);
+            doc.text(userProfile.name, 148.5, 70, {
+                align: 'center'
+            });
+
+            doc.setFontSize(16);
+            doc.text("JavaScript тесті бойынша сәтті оқуды аяқтады", 148.5, 90, {
+                align: 'center'
+            });
+
+            const score = evaluateResults();
+            const percentage = Math.round((score / questions.length) * 100);
+            doc.text(`Нәтиже: ${percentage}%`, 148.5, 110, {
+                align: 'center'
+            });
+
+            const today = new Date();
+            doc.text(`Күні: ${today.toLocaleDateString()}`, 148.5, 130, {
+                align: 'center'
+            });
+
+            // Сохраняем PDF
+            doc.save("certificate.pdf");
+        }
+
+        // Социальные функции
+        function shareResult(platform) {
+            const score = evaluateResults();
+            const percentage = Math.round((score / questions.length) * 100);
+            const shareText = `Мен JavaScript тестінен ${percentage}% нәтиже көрсеттім! Сен де тексеріп көр!`;
+            const shareUrl = window.location.href;
+
+            let shareLink = '';
+
+            switch (platform) {
+                case 'facebook':
+                    shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+                    break;
+                case 'twitter':
+                    shareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    break;
+                case 'whatsapp':
+                    shareLink = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
+                    break;
+                case 'telegram':
+                    shareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+                    break;
+            }
+
+            if (shareLink) {
+                window.open(shareLink, '_blank');
+            }
+        }
+
+        // Функция для проверки и выдачи достижений
+        function checkAchievements() {
+            const newAchievements = [];
+
+            // Проверяем первое достижение
+            if (userProfile.testsCompleted === 1 && !hasAchievement('first_test')) {
+                newAchievements.push(ACHIEVEMENTS.FIRST_TEST);
+            }
+
+            // Проверяем идеальный результат
+            if (userProfile.history.length > 0) {
+                const lastTest = userProfile.history[userProfile.history.length - 1];
+                if (lastTest.percentage === 100 && !hasAchievement('perfect_score')) {
+                    newAchievements.push(ACHIEVEMENTS.PERFECT_SCORE);
+                }
+            }
+
+            // Проверяем скорость
+            if (userProfile.history.length > 0) {
+                const lastTest = userProfile.history[userProfile.history.length - 1];
+                const avgTime = userProfile.history.reduce((sum, test) => sum + test.time, 0) / userProfile.history.length;
+                if (lastTest.time < avgTime / 2 && !hasAchievement('speed_demon')) {
+                    newAchievements.push(ACHIEVEMENTS.SPEED_DEMON);
+                }
+            }
+
+            // Проверяем последовательность
+            if (userProfile.history.length >= 5) {
+                const lastFiveTests = userProfile.history.slice(-5);
+                const allHighScores = lastFiveTests.every(test => test.percentage >= 80);
+                if (allHighScores && !hasAchievement('consistent')) {
+                    newAchievements.push(ACHIEVEMENTS.CONSISTENT);
+                }
+            }
+
+            // Проверяем мастерство
+            if (userProfile.points >= 1000 && !hasAchievement('master')) {
+                newAchievements.push(ACHIEVEMENTS.MASTER);
+            }
+
+            // Добавляем новые достижения
+            if (newAchievements.length > 0) {
+                userProfile.achievements.push(...newAchievements);
+                showAchievementNotification(newAchievements);
+                saveUserProfile();
+            }
+        }
+
+        // Функция проверки наличия достижения
+        function hasAchievement(achievementId) {
+            return userProfile.achievements.some(a => a.id === achievementId);
+        }
+
+        // Функция отображения уведомления о достижении
+        function showAchievementNotification(achievements) {
+            const notificationContainer = document.createElement('div');
+            notificationContainer.className = 'achievement-notification';
+
+            achievements.forEach(achievement => {
+                const notification = document.createElement('div');
+                notification.className = 'achievement-popup';
+                notification.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-info">
+                        <h3>${achievement.title}</h3>
+                        <p>${achievement.description}</p>
+                    </div>
+                `;
+                notificationContainer.appendChild(notification);
+            });
+
+            document.body.appendChild(notificationContainer);
+
+            // Анимация появления
+            setTimeout(() => {
+                notificationContainer.classList.add('show');
+            }, 100);
+
+            // Удаление через 5 секунд
+            setTimeout(() => {
+                notificationContainer.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notificationContainer);
+                }, 500);
+            }, 5000);
+        }
+
+        function confirmExit() {
+            document.getElementById('exitModal').style.display = 'block';
+        }
+
+        function closeExitModal() {
+            document.getElementById('exitModal').style.display = 'none';
+        }
+
+        function exitTest() {
+            // Очищаем все интервалы
+            clearInterval(timerInterval);
+            clearInterval(questionTimerInterval);
+
+            // Скрываем тест и показываем начальный экран
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('setup').style.display = 'block';
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('homeBtn').style.display = 'none';
+
+            // Закрываем модальное окно
+            closeExitModal();
+
+            // Сбрасываем все переменные
+            current = 0;
+            correct = 0;
+            answers = [];
+            questionTimes = [];
+            timeElapsed = 0;
+
+            // Обновляем прогресс-бар
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+
+</html>
